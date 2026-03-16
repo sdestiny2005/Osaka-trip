@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>關西漫步 | Kansai Trip</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #fff5f7; }
+        .safe-area-bottom { padding-bottom: env(safe-area-inset-bottom); }
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
+    </style>
+</head>
+<body>
+    <div id="app" class="max-w-md mx-auto min-h-screen pb-24 relative shadow-xl bg-white">
+        <header class="p-6 text-center border-b border-pink-100 bg-pink-50">
+            <h1 class="text-2xl font-bold text-pink-600">大阪・京都 🌸</h1>
+            <p class="text-xs text-pink-400 mt-1">おおさか ・ きょうと</p>
+        </header>
+
+        <main class="p-4">
+            <section v-if="activeTab === 'itinerary'" class="space-y-4">
+                <h2 class="font-bold text-gray-700 mb-2"><i class="fa-solid fa-calendar-day mr-2 text-pink-400"></i>今日行程</h2>
+                <div v-for="(item, i) in itinerary" :key="i" class="flex gap-4 p-4 rounded-2xl bg-pink-50 border-l-4 border-pink-400">
+                    <span class="text-sm font-mono text-pink-600">{{ item.time }}</span>
+                    <span class="text-gray-700 font-medium">{{ item.event }}</span>
+                </div>
+            </section>
+
+            <section v-if="activeTab === 'map'" class="h-[60vh] rounded-3xl overflow-hidden border-2 border-pink-200 relative">
+                <div class="absolute inset-0 bg-gray-100 flex items-center justify-center text-gray-400 flex-col">
+                    <i class="fa-solid fa-map-location-dot text-5xl mb-2"></i>
+                    <p>Google Map 預留區</p>
+                    <p class="text-xs">（此處可嵌入 iframe 或 API）</p>
+                </div>
+            </section>
+
+            <section v-if="activeTab === 'expense'" class="space-y-4">
+                <div class="p-6 rounded-3xl bg-gradient-to-br from-pink-400 to-rose-300 text-white shadow-lg">
+                    <p class="text-sm opacity-90">目前總花費 (JPY)</p>
+                    <p class="text-3xl font-bold">¥ {{ totalExpense }}</p>
+                </div>
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-pink-50">
+                    <div v-for="(exp, i) in expenses" :key="i" class="flex justify-between py-2 border-b border-gray-50 last:border-0">
+                        <span class="text-gray-600">{{ exp.item }}</span>
+                        <span class="font-mono font-bold text-pink-500">¥{{ exp.amount }}</span>
+                    </div>
+                </div>
+            </section>
+
+            <section v-if="activeTab === 'shopping'" class="space-y-3">
+                <h2 class="font-bold text-gray-700">伴手禮清單</h2>
+                <div v-for="(shop, i) in shoppingList" :key="i" class="flex items-center p-4 bg-white rounded-2xl shadow-sm border border-pink-50">
+                    <input type="checkbox" v-model="shop.done" class="w-5 h-5 accent-pink-500 rounded">
+                    <span :class="{'line-through text-gray-300': shop.done}" class="ml-3 text-gray-600">{{ shop.name }}</span>
+                </div>
+            </section>
+        </main>
+
+        <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t border-pink-100 flex justify-around p-3 safe-area-bottom shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
+            <button @click="activeTab = 'itinerary'" :class="activeTab === 'itinerary' ? 'text-pink-500' : 'text-gray-400'" class="flex flex-col items-center">
+                <i class="fa-solid fa-map-pin"></i><span class="text-[10px] mt-1">行程</span>
+            </button>
+            <button @click="activeTab = 'map'" :class="activeTab === 'map' ? 'text-pink-500' : 'text-gray-400'" class="flex flex-col items-center">
+                <i class="fa-solid fa-location-arrow"></i><span class="text-[10px] mt-1">地圖</span>
+            </button>
+            <button @click="activeTab = 'expense'" :class="activeTab === 'expense' ? 'text-pink-500' : 'text-gray-400'" class="flex flex-col items-center">
+                <i class="fa-solid fa-yen-sign"></i><span class="text-[10px] mt-1">記帳</span>
+            </button>
+            <button @click="activeTab = 'shopping'" :class="activeTab === 'shopping' ? 'text-pink-500' : 'text-gray-400'" class="flex flex-col items-center">
+                <i class="fa-solid fa-bag-shopping"></i><span class="text-[10px] mt-1">清單</span>
+            </button>
+        </nav>
+    </div>
+
+    <script>
+        const { createApp, ref, computed } = Vue;
+        createApp({
+            setup() {
+                const activeTab = ref('itinerary');
+                const itinerary = ref([
+                    { time: '09:00', event: '關西空港抵達' },
+                    { time: '11:30', event: '黑門市場午餐' },
+                    { time: '14:00', event: '心齋橋逛街' }
+                ]);
+                const expenses = ref([
+                    { item: '拉麵', amount: 1200 },
+                    { item: '藥妝', amount: 5500 }
+                ]);
+                const shoppingList = ref([
+                    { name: '呼吸巧克力', done: false },
+                    { name: '環球影城星星爆米花桶', done: true }
+                ]);
+                const totalExpense = computed(() => expenses.value.reduce((sum, e) => sum + e.amount, 0));
+
+                return { activeTab, itinerary, expenses, shoppingList, totalExpense };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
