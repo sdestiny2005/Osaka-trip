@@ -21,12 +21,13 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .date-tab { flex: 0 0 auto; padding: 0.5rem 1rem; border-radius: 99px; font-size: 0.75rem; transition: all 0.3s; border: 1px solid #fef3c7; background: #fff; color: #d97706; }
         .date-tab.active { background: #fbbf24; color: white; border-color: #fbbf24; box-shadow: 0 4px 10px rgba(251, 191, 36, 0.3); }
-        /* 勾選後的過渡效果 */
         .item-done { opacity: 0.4; text-decoration: line-through; color: #9ca3af; transition: all 0.3s ease; }
+        .btn-amber { background: #fbbf24; color: white; font-weight: bold; border-radius: 0.75rem; transition: transform 0.1s; }
+        .btn-amber:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
-    <div id="app" class="max-w-md mx-auto min-h-screen pb-28 relative shadow-xl bg-white">
+    <div id="app" class="max-w-md mx-auto min-h-screen pb-32 relative shadow-xl bg-white">
         <header class="p-5 text-center border-b border-amber-100 bg-amber-50 sticky top-0 z-20">
             <h1 class="text-xl font-bold text-amber-700 tracking-widest uppercase">Osaka Trip 2026</h1>
             <div class="flex justify-center items-center gap-2 mt-1 text-amber-500 text-[10px] font-bold">
@@ -44,7 +45,7 @@
                 </div>
                 <div class="flex justify-between items-center px-1">
                     <h2 class="font-bold text-amber-900 text-sm"><i class="fa-solid fa-calendar-day mr-2 text-amber-500"></i>{{ selectedDate }} 行程</h2>
-                    <button @click="addItem('itinerary')" class="text-[10px] bg-amber-500 text-white px-3 py-1.5 rounded-full shadow-sm">+ 新增行程</button>
+                    <button @click="addItem('itinerary')" class="text-[10px] bg-amber-500 text-white px-3 py-1.5 rounded-full shadow-sm">+ 新增</button>
                 </div>
                 <div v-for="(item, i) in itineraryData[selectedDate]" :key="i" class="flex gap-4 p-4 rounded-2xl bg-amber-50 border-l-4 border-amber-400 relative">
                     <span class="text-sm font-mono text-amber-600 font-bold">{{ item.time }}</span>
@@ -56,20 +57,12 @@
             <section v-show="activeTab === 'flight'" class="space-y-4">
                 <h2 class="font-bold text-amber-900 mb-2"><i class="fa-solid fa-plane-up mr-2 text-amber-500"></i>航班資訊</h2>
                 <div class="bg-white p-4 rounded-3xl border border-amber-100 shadow-sm space-y-4">
-                    <div>
-                        <p class="text-[10px] text-amber-500 font-black mb-1 italic">DEPARTURE 去程</p>
-                        <input v-model="flight.depNo" placeholder="航班號 (如: JX802)" class="w-full p-2 text-sm outline-none border-b border-amber-50 bg-amber-50/30 rounded-t-lg">
+                    <div v-for="type in ['dep', 'ret']" :key="type">
+                        <p class="text-[10px] text-amber-500 font-black mb-1 italic uppercase">{{ type === 'dep' ? 'Departure 去程' : 'Return 回程' }}</p>
+                        <input v-model="flight[type + 'No']" placeholder="航班號 (如: JX802)" class="w-full p-2 text-sm outline-none border-b border-amber-50 bg-amber-50/30 rounded-t-lg">
                         <div class="flex gap-2 mt-2">
-                            <input v-model="flight.depTime" placeholder="起飛時間" class="w-1/2 p-2 text-sm outline-none border-b border-amber-50 bg-amber-50/30">
-                            <input v-model="flight.depArr" placeholder="降落時間" class="w-1/2 p-2 text-sm outline-none border-b border-amber-50 bg-amber-50/30">
-                        </div>
-                    </div>
-                    <div>
-                        <p class="text-[10px] text-amber-500 font-black mb-1 italic">RETURN 回程</p>
-                        <input v-model="flight.retNo" placeholder="航班號 (如: JX803)" class="w-full p-2 text-sm outline-none border-b border-amber-50 bg-amber-50/30 rounded-t-lg">
-                        <div class="flex gap-2 mt-2">
-                            <input v-model="flight.retTime" placeholder="起飛時間" class="w-1/2 p-2 text-sm outline-none border-b border-amber-50 bg-amber-50/30">
-                            <input v-model="flight.retArr" placeholder="降落時間" class="w-1/2 p-2 text-sm outline-none border-b border-amber-50 bg-amber-50/30">
+                            <input v-model="flight[type + 'Time']" placeholder="起飛時間" class="w-1/2 p-2 text-sm outline-none border-b border-amber-50 bg-amber-50/30">
+                            <input v-model="flight[type + 'Arr']" placeholder="降落時間" class="w-1/2 p-2 text-sm outline-none border-b border-amber-50 bg-amber-50/30">
                         </div>
                     </div>
                 </div>
@@ -77,7 +70,7 @@
 
             <section v-show="activeTab === 'map'" class="space-y-4">
                 <div class="h-[70vh] rounded-[2rem] overflow-hidden border-2 border-amber-100 shadow-inner">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d105001.35345710255!2d135.43714856427506!3d34.69373778505524!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6000e6553406e2e1%3A0xc5a350d248b11f6a!2sOsaka%2C%20Japan!5e0!3m2!1sen!2stw!4v1710600000000!5m2!1sen!2stw" 
+                    <iframe src="http://googleusercontent.com/maps.google.com/9" 
                         class="w-full h-full border-0" allowfullscreen="" loading="lazy"></iframe>
                 </div>
             </section>
@@ -93,29 +86,39 @@
                         <input v-model.number="newExpense.amount" type="number" placeholder="金額" class="w-24 p-3 rounded-xl bg-amber-50 text-sm font-mono outline-none">
                     </div>
                     <div class="flex gap-2">
-                        <select v-model="newExpense.method" class="flex-1 p-3 rounded-xl bg-amber-50 text-sm text-amber-700 outline-none">
+                        <select v-model="newExpense.method" class="flex-1 p-3 rounded-xl bg-amber-50 text-sm text-amber-700 outline-none border-none">
                             <option value="現金">💵 現金</option>
                             <option value="信用卡">💳 信用卡</option>
                         </select>
-                        <button @click="addExpense" class="bg-amber-500 text-white px-8 rounded-xl font-bold text-xs uppercase">Add</button>
+                        <button @click="addExpense" class="bg-amber-500 text-white px-6 rounded-xl font-bold text-xs uppercase">Add</button>
                     </div>
                 </div>
+                
                 <div class="space-y-2 mt-4">
                     <div v-for="(exp, i) in expenses" :key="i" class="flex justify-between items-center p-4 bg-white rounded-2xl border border-amber-50">
                         <div class="flex flex-col">
                             <span class="text-gray-700 text-sm font-bold">{{ exp.item }}</span>
                             <span class="text-[9px] text-amber-500 font-bold uppercase tracking-widest">{{ exp.method }}</span>
                         </div>
-                        <div class="flex items-center gap-4">
-                            <span class="font-mono font-bold text-amber-600">¥{{ exp.amount }}</span>
-                            <button @click="removeItem('expenses', i)" class="text-amber-200"><i class="fa-solid fa-trash-can"></i></button>
-                        </div>
+                        <span class="font-mono font-bold text-amber-600">¥{{ exp.amount }}</span>
+                    </div>
+                </div>
+
+                <div class="pt-10 border-t border-amber-100 mt-10">
+                    <p class="text-center text-[10px] text-amber-400 font-bold mb-3 uppercase tracking-widest">Data Management</p>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button @click="backupData" class="p-3 text-xs bg-white border border-amber-200 text-amber-600 rounded-xl font-bold shadow-sm">
+                            <i class="fa-solid fa-copy mr-2"></i>備份資料
+                        </button>
+                        <button @click="restoreData" class="p-3 text-xs bg-white border border-amber-200 text-amber-600 rounded-xl font-bold shadow-sm">
+                            <i class="fa-solid fa-file-import mr-2"></i>還原資料
+                        </button>
                     </div>
                 </div>
             </section>
 
             <section v-show="activeTab === 'shopping'" class="space-y-4">
-                <h2 class="font-bold text-amber-900 mb-2"><i class="fa-solid fa-cart-shopping mr-2 text-amber-500"></i>待購買清單</h2>
+                <h2 class="font-bold text-amber-900 mb-2"><i class="fa-solid fa-cart-shopping mr-2 text-amber-500"></i>購買清單</h2>
                 <div class="flex gap-2 mb-6">
                     <input v-model="newShopItem" @keyup.enter="addItem('shopping')" placeholder="想買什麼呢？" class="flex-1 p-4 rounded-2xl bg-amber-50 text-sm outline-none border border-amber-100">
                     <button @click="addItem('shopping')" class="bg-amber-500 text-white px-6 rounded-2xl font-bold text-xs">SAVE</button>
@@ -123,33 +126,18 @@
                 <div v-for="(shop, i) in shoppingList" :key="i" 
                     class="flex items-center p-5 bg-white rounded-2xl border border-amber-50 shadow-sm" 
                     :class="{'item-done': shop.done}">
-                    <div class="relative flex items-center">
-                        <input type="checkbox" v-model="shop.done" class="w-6 h-6 rounded-full accent-amber-500 border-amber-300">
-                    </div>
+                    <input type="checkbox" v-model="shop.done" class="w-6 h-6 rounded-full accent-amber-500">
                     <span class="ml-4 text-gray-700 flex-1 text-sm font-medium">{{ shop.name }}</span>
                     <button @click="removeItem('shopping', i)" class="text-amber-200"><i class="fa-solid fa-circle-xmark"></i></button>
-                </div>
-                <div v-if="shoppingList.length === 0" class="text-center py-10 text-gray-300 text-xs italic">
-                    清單空空如也，快去大買特買吧！
                 </div>
             </section>
         </main>
 
         <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/95 backdrop-blur-md border-t border-amber-100 flex justify-between px-1 py-3 safe-area-bottom shadow-[0_-10px_30px_rgba(217,119,6,0.05)] rounded-t-[2.5rem] z-30">
-            <button @click="activeTab = 'itinerary'" :class="activeTab === 'itinerary' ? 'text-amber-500' : 'text-amber-200'" class="flex flex-col items-center flex-1">
-                <i class="fa-solid fa-calendar-check text-xl"></i><span class="text-[8px] mt-1 font-black">行程</span>
-            </button>
-            <button @click="activeTab = 'flight'" :class="activeTab === 'flight' ? 'text-amber-500' : 'text-amber-200'" class="flex flex-col items-center flex-1">
-                <i class="fa-solid fa-plane text-xl"></i><span class="text-[8px] mt-1 font-black">航班</span>
-            </button>
-            <button @click="activeTab = 'map'" :class="activeTab === 'map' ? 'text-amber-500' : 'text-amber-200'" class="flex flex-col items-center flex-1">
-                <i class="fa-solid fa-map-location-dot text-xl"></i><span class="text-[8px] mt-1 font-black">地圖</span>
-            </button>
-            <button @click="activeTab = 'expense'" :class="activeTab === 'expense' ? 'text-amber-500' : 'text-amber-200'" class="flex flex-col items-center flex-1">
-                <i class="fa-solid fa-wallet text-xl"></i><span class="text-[8px] mt-1 font-black">記帳</span>
-            </button>
-            <button @click="activeTab = 'shopping'" :class="activeTab === 'shopping' ? 'text-amber-500' : 'text-amber-200'" class="flex flex-col items-center flex-1">
-                <i class="fa-solid fa-cart-shopping text-xl"></i><span class="text-[8px] mt-1 font-black">清單</span>
+            <button v-for="btn in navButtons" :key="btn.id" @click="activeTab = btn.id" 
+                :class="activeTab === btn.id ? 'text-amber-500' : 'text-amber-200'" class="flex flex-col items-center flex-1">
+                <i :class="btn.icon" class="text-xl"></i>
+                <span class="text-[8px] mt-1 font-black uppercase">{{ btn.label }}</span>
             </button>
         </nav>
     </div>
@@ -161,31 +149,40 @@
                 const activeTab = ref('itinerary');
                 const selectedDate = ref('4/16');
                 const dates = ['4/16', '4/17', '4/18', '4/19', '4/20', '4/21'];
+                const navButtons = [
+                    { id: 'itinerary', label: '行程', icon: 'fa-solid fa-calendar-check' },
+                    { id: 'flight', label: '航班', icon: 'fa-solid fa-plane' },
+                    { id: 'map', label: '地圖', icon: 'fa-solid fa-map-location-dot' },
+                    { id: 'expense', label: '記帳', icon: 'fa-solid fa-wallet' },
+                    { id: 'shopping', label: '清單', icon: 'fa-solid fa-cart-shopping' }
+                ];
 
                 const flight = ref({ depNo: '', depTime: '', depArr: '', retNo: '', retTime: '', retArr: '' });
                 const expenses = ref([]);
                 const shoppingList = ref([]);
                 const itineraryData = ref({ '4/16': [], '4/17': [], '4/18': [], '4/19': [], '4/20': [], '4/21': [] });
-                
                 const newExpense = ref({ item: '', amount: null, method: '現金' });
                 const newShopItem = ref('');
 
                 onMounted(() => {
-                    const savedIt = localStorage.getItem('osaka_it_v6');
-                    const savedEx = localStorage.getItem('osaka_ex_v6');
-                    const savedFl = localStorage.getItem('osaka_fl_v6');
-                    const savedSh = localStorage.getItem('osaka_sh_v6');
-                    if (savedIt) itineraryData.value = JSON.parse(savedIt);
-                    if (savedEx) expenses.value = JSON.parse(savedEx);
-                    if (savedFl) flight.value = JSON.parse(savedFl);
-                    if (savedSh) shoppingList.value = JSON.parse(savedSh);
+                    const saved = localStorage.getItem('osaka_v6_final');
+                    if (saved) {
+                        const data = JSON.parse(saved);
+                        itineraryData.value = data.itineraryData || itineraryData.value;
+                        expenses.value = data.expenses || [];
+                        flight.value = data.flight || flight.value;
+                        shoppingList.value = data.shoppingList || [];
+                    }
                 });
 
                 watch([itineraryData, expenses, flight, shoppingList], () => {
-                    localStorage.setItem('osaka_it_v6', JSON.stringify(itineraryData.value));
-                    localStorage.setItem('osaka_ex_v6', JSON.stringify(expenses.value));
-                    localStorage.setItem('osaka_fl_v6', JSON.stringify(flight.value));
-                    localStorage.setItem('osaka_sh_v6', JSON.stringify(shoppingList.value));
+                    const data = {
+                        itineraryData: itineraryData.value,
+                        expenses: expenses.value,
+                        flight: flight.value,
+                        shoppingList: shoppingList.value
+                    };
+                    localStorage.setItem('osaka_v6_final', JSON.stringify(data));
                 }, { deep: true });
 
                 const totalExpense = computed(() => expenses.value.reduce((sum, e) => sum + (e.amount || 0), 0));
@@ -217,7 +214,35 @@
                     if (type === 'itinerary') itineraryData.value[selectedDate.value].splice(index, 1);
                 };
 
-                return { activeTab, selectedDate, dates, flight, itineraryData, expenses, shoppingList, totalExpense, newExpense, newShopItem, addExpense, addItem, removeItem };
+                // 備份功能
+                const backupData = () => {
+                    const dataStr = localStorage.getItem('osaka_v6_final');
+                    if (dataStr) {
+                        navigator.clipboard.writeText(dataStr).then(() => {
+                            alert("✅ 資料代碼已複製到剪貼簿！\n請貼到 LINE 或記事本備份。");
+                        });
+                    }
+                };
+
+                // 還原功能
+                const restoreData = () => {
+                    const dataStr = prompt("請貼上之前備份的資料代碼：");
+                    if (dataStr) {
+                        try {
+                            const data = JSON.parse(dataStr);
+                            if (data.itineraryData) {
+                                localStorage.setItem('osaka_v6_final', dataStr);
+                                location.reload(); // 重整頁面載入資料
+                            } else {
+                                alert("❌ 資料格式錯誤，無法還原。");
+                            }
+                        } catch (e) {
+                            alert("❌ 無效的資料代碼。");
+                        }
+                    }
+                };
+
+                return { activeTab, selectedDate, dates, navButtons, flight, itineraryData, expenses, shoppingList, totalExpense, newExpense, newShopItem, addExpense, addItem, removeItem, backupData, restoreData };
             }
         }).mount('#app');
     </script>
